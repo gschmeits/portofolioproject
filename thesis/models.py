@@ -3,6 +3,19 @@ from django.contrib import admin
 
 # Create your models here.
 class Issue(models.Model):
+    VERY_HIGH = 1
+    HIGH = 2
+    MEDIUM = 3
+    LOW = 4
+    LOWEST = 5
+    PRIORITY_CHOICES = (
+        (VERY_HIGH, 'Very Hight'),
+        (HIGH, 'High'),
+        (MEDIUM, 'Medium'),
+        (LOW, 'Low'),
+        (LOWEST, 'Lowest')
+    )
+
     TO_DO = 1
     IN_PROGRESS = 2
     CODE_REVIEW = 3
@@ -30,6 +43,7 @@ class Issue(models.Model):
     )
     thesnr = models.CharField(max_length=200, default="THES-")
     description = models.TextField()
+    priority = models.IntegerField(choices=PRIORITY_CHOICES, default=MEDIUM)
     status = models.IntegerField(choices=STATUS_CHOICES, default=TO_DO)
     kind = models.IntegerField(choices=KIND_CHOICES, default=BUG)
     sprint = models.IntegerField(default=5)
