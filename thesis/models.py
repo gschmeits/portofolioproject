@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib import admin
+from django.template.defaultfilters import linebreaksbr, urlize, register
+
 
 # Create your models here.
 class Issue(models.Model):
@@ -41,15 +42,26 @@ class Issue(models.Model):
         (BUG, 'Bug'),
         (SUB_TASK, 'Sub-Task')
     )
-    thesnr = models.CharField(max_length=200, default="THES-")
+    thesnr = models.CharField(max_length=12, default="THES-")
     description = models.TextField()
     priority = models.IntegerField(choices=PRIORITY_CHOICES, default=MEDIUM)
     status = models.IntegerField(choices=STATUS_CHOICES, default=TO_DO)
     kind = models.IntegerField(choices=KIND_CHOICES, default=BUG)
     sprint = models.IntegerField(default=5)
+    storypoints = models.CharField(max_length=3, default="")
 
     def __str__(self):
         return self.thesnr
 
+    def shortDescription(self):
+        return str(self.description)[:100]
 
+    def description1(self):
+        return linebreaksbr(self.description, True)
 
+    @register.filter(needs_autoescape=True)
+    def urlize_and_linebreaks(self, autoescape=True):
+        return linebreaksbr(
+            urlize(self.description, autoescape=autoescape),
+            autoescape=autoescape
+        )
